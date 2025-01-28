@@ -1,0 +1,231 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "IMF Gadget API",
+      "version": "1.0.0",
+      "description": "Secure API for managing Impossible Missions Force gadgets"
+    },
+    "servers": [
+      {
+        "url": "http://localhost:3000",
+        "description": "Local development server"
+      },
+      {
+        "url": "",
+        "description": "Production environment"
+      }
+    ],
+    "tags": [
+      {
+        "name": "Authentication",
+        "description": "JWT token generation"
+      },
+      {
+        "name": "Gadgets",
+        "description": "Gadget inventory management"
+      }
+    ],
+    "paths": {
+      "/auth/login": {
+        "post": {
+          "tags": ["Authentication"],
+          "summary": "Get JWT token",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "username": { "type": "string" },
+                    "password": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "JWT token",
+              "content": {
+                "application/json": {
+                  "example": {
+                    "token": "6369964455f238ca2ed04af7b0fb4212ed02a448f..."
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Invalid credentials"
+            }
+          }
+        }
+      },
+      "/gadgets": {
+        "get": {
+          "tags": ["Gadgets"],
+          "summary": "Get all gadgets",
+          "parameters": [
+            {
+              "name": "status",
+              "in": "query",
+              "description": "Filter gadgets by status",
+              "schema": {
+                "type": "string",
+                "enum": ["Available", "Deployed", "Destroyed", "Decommissioned"]
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "List of gadgets",
+              "content": {
+                "application/json": {
+                  "example": [
+                    {
+                      "id": "13233272-415c-48b5-b232-1f76348145e7",
+                      "name": "ShadowSphere",
+                      "codename": "The Specter Delta",
+                      "status": "Available",
+                      "decommissionedAt": null,
+                      "createdAt": "2025-01-28T13:08:02.633Z",
+                      "updatedAt": "2025-01-28T13:08:02.633Z",
+                      "missionSuccessProbability": 89
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "post": {
+          "tags": ["Gadgets"],
+          "summary": "Create new gadget",
+          "security": [{"BearerAuth": []}],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Created gadget",
+              "content": {
+                "application/json": {
+                  "example": {
+                    "id": "13233272-415c-48b5-b232-1f76348145e7",
+                    "name": "ShadowSphere",
+                    "codename": "The Specter Delta",
+                    "status": "Available",
+                    "decommissionedAt": null,
+                    "createdAt": "2025-01-28T13:08:02.633Z",
+                    "updatedAt": "2025-01-28T13:08:02.633Z",
+                    "missionSuccessProbability": 89
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/gadgets/{id}": {
+        "patch": {
+          "tags": ["Gadgets"],
+          "summary": "Update gadget",
+          "security": [{"BearerAuth": []}],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": { "type": "string" }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": { "type": "string" },
+                    "status": { 
+                      "type": "string",
+                      "enum": ["Available", "Deployed", "Destroyed"]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Updated gadget"
+            }
+          }
+        },
+        "delete": {
+          "tags": ["Gadgets"],
+          "summary": "Decommission gadget",
+          "security": [{"BearerAuth": []}],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": { "type": "string" }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Decommissioned gadget"
+            }
+          }
+        }
+      },
+      "/gadgets/{id}/self-destruct": {
+        "post": {
+          "tags": ["Gadgets"],
+          "summary": "Initiate self-destruct sequence",
+          "security": [{"BearerAuth": []}],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": { "type": "string" }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Self-destruct initiated",
+              "content": {
+                "application/json": {
+                  "example": {
+                    "confirmationCode": 562445,
+                    "message": "Self-destruct sequence initiated"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "securitySchemes": {
+        "BearerAuth": {
+          "type": "http",
+          "scheme": "bearer",
+          "bearerFormat": "JWT"
+        }
+      }
+    }
+  }
