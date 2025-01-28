@@ -9,6 +9,9 @@ import dotenv from 'dotenv';
 dotenv.config();
 connectDB();
 const app = express();
+app.get('/', (req, res) => {
+  res.send({message: 'Welcome to the IMF Gadget API'});
+});
 app.use(express.json());
 app.use(cors());
 app.use('/auth', authRoutes);
