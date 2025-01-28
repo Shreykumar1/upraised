@@ -34,7 +34,7 @@ Refer to the `/docs` route for API documentation.
 
 1. Clone the repository:
    ```bash
-   git clone 
+   git clone https://github.com/Shreykumar1/upraised.git
    cd upraised
    ```
 
